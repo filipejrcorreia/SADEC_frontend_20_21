@@ -1,0 +1,129 @@
+{% from "_render_field.html" import render_field %}
+
+<html>
+    <head>
+        <title>Do I Have COVID?</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Lato:300,400,500' rel='stylesheet' type='text/css'>
+        <link href='custom.css' rel='stylesheet' type='text/css'>
+    </head>
+
+    <body style = "background: url('https://dynaimage.cdn.cnn.com/cnn/c_fill,g_auto,w_1200,h_675,ar_16:9/https%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F200320110619-coronavirus-animation.jpg');
+background-size: 100% 100%;">
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-xl-8 offset-xl-2">
+
+                    <h1>Responda às seguintes questões:
+                    </h1>
+
+                    <form class=form-horizontal method="POST" action ="{{ url_for('catch_all') }}">
+
+                        <!--CSRF Token-->
+                        {{ form.csrf_token }}
+
+                        <label for= "{{ form.age.name }}" > {{ form.age.label.text }}</label>
+                        {{ form.age(class_='form-control')}}
+                        {% for error in form.age.errors %}
+                        <li>
+                           <strong>ERROR: </strong> {{error}}
+                        </li>
+                        {% endfor %}
+
+                        {{ render_field(form.location) }}
+
+                        {{ render_field(form.cough) }}
+
+                        {{ render_field(form.fever) }}
+
+                        {{ render_field(form.muscle_sore) }}
+
+                        {{ render_field(form.fatigue) }}
+
+                        {{ render_field(form.sore_throat) }}
+
+                        {{ render_field(form.lack_of_air) }}
+
+                        {{ render_field(form.loss_of_smell ) }}
+
+                        {{ render_field(form.loss_of_taste) }}
+
+                        <div class="form-group">
+                            <label for= "{{ form.headache.name }}" > {{ form.headache.label.text }}</label>
+                            {{ (form.headache(class_='form-control', onchange="disableContent()")) }}
+                            {% for error in form.headache.errors %}
+                            <li>
+                                <strong>ERROR: </strong> {{error}}
+                            </li>
+                            {% endfor %}
+                            <script>
+                                function disableContent(){
+                                    var currentValue = document.getElementById('headache').value
+                                    if (currentValue == 'no'){
+                                        document.getElementById('type_of_headache').disabled = true
+                                        document.getElementById('intensity').disabled = true
+                                    } else {
+                                        document.getElementById('type_of_headache').disabled = false
+                                        document.getElementById('intensity').disabled = false
+                                    }
+                                }
+                                disableContent()
+                            </script>    
+                        </div>
+                   
+                        <label for= "{{ form.type_of_headache.name }}" > {{ form.type_of_headache.label.text }}</label>
+                        {{ form.type_of_headache(class_='form-control',disabled=true)}}
+                        {% for error in form.type_of_headache.errors %}
+                        <li>
+                            <strong>ERROR: </strong> {{error}}
+                        </li>
+                        {% endfor %}
+                        <p></p>
+                        {{form.intensity.label}}
+                        {{form.intensity(min=1, max=10, value=1, oninput="showValue(value)",disabled=true)}}
+                        <span id="range">1</span>
+                        <output>
+                            <script type="text/javascript">
+                            function showValue(newValue)
+                            {
+                                document.getElementById("range").innerHTML=newValue;
+                            }
+                            </script>
+                        </output>
+
+                        {{ render_field(form.contact) }}
+
+                        <div class="controls">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    {{ form.recaptcha }}
+                                    {% for error in form.recaptcha.errors %}
+                                        <Strong>reCAPTCHA validation required!</Strong>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-lg-6">
+                                    <input type="submit" class="btn btn-primary" value="Submit" style="width:160px;height:70px;">         
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.8 -->
+            </div>
+            <!-- /.row-->
+        </div>
+        <!-- /.container-->
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script src="validator.js"></script>
+        <script src="contact.js"></script>
+    </body>
+
+</html>
